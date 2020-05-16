@@ -1,6 +1,26 @@
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
+import AuthContext from '../../context/auth/authContext';
+import AlertContext from "../../context/alert/alertContext";
 
-const Login = () => {
+const Login = ({history}) => {
+    const alertContext = useContext(AlertContext);
+    const authContext = useContext(AuthContext);
+
+    const {setAlert} = alertContext;
+    const {login, error, clearErrors, isAuthenticated} = authContext;
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            history.push('/');
+        }
+
+        if (error === 'Invalid Credentials') {
+            setAlert(error, 'danger');
+            clearErrors();
+        }
+        // eslint-disable-next-line
+    }, [error, isAuthenticated, history]);
+
     const [user, setUser] = useState({
         email: '',
         password: ''
@@ -13,7 +33,14 @@ const Login = () => {
     const handleSubmit = e => {
         e.preventDefault();
 
-        console.log('Login submit');
+        if (email === '' || password === '') {
+            setAlert('Please enter all fields', 'danger');
+        } else {
+            login({
+                email,
+                password
+            })
+        }
     }
 
     return (
@@ -24,13 +51,26 @@ const Login = () => {
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="email">Email Address</label>
-                    <input type="email" name="email" value={email} onChange={handleChange}/>
+                    <input type="email"
+                           name="email"
+                           value={email}
+                           onChange={handleChange}
+                           required
+                    />
                 </div>
                 <div className="form-group">
                     <label htmlFor="password">Password</label>
-                    <input type="password" name="password" value={password} onChange={handleChange}/>
+                    <input type="password"
+                           name="password"
+                           value={password}
+                           onChange={handleChange}
+                           required
+                    />
                 </div>
-                <input type="submit" value="Login" className="btn btn-primary btn-block"/>
+                <input type="submit"
+                       value="Login"
+                       className="btn btn-primary btn-block"
+                />
             </form>
         </div>
     );
