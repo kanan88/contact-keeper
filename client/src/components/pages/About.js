@@ -1,11 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-About.propTypes = {
-    
-};
-
-function About(props) {
+const About = () => {
     return (
         <div>
             <h1>About This App</h1>
